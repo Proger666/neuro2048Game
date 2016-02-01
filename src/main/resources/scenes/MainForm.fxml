@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Controller">
+   <columnConstraints>
+      <ColumnConstraints />
+      <ColumnConstraints />
+      <ColumnConstraints />
+      <ColumnConstraints />
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+   </rowConstraints>
+   <children>
+      <Button fx:id="goButt" mnemonicParsing="false" onAction="#onClickGoButt" text="GO!" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+      <Label text="Population size" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+      <Label text="Tick Time" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+      <Label text="Hidden Nodes Count" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+      <TextField fx:id="popSizeField" text="500" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+      <TextField fx:id="tickTimeInputField" text="0.01" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+      <TextField fx:id="hiddenNodesCount" text="2" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+
+   </children>
+</GridPane>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="652.0" prefWidth="883.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ControllerNeuroNetForm">
+   <left>
+      <VBox prefHeight="400.0" prefWidth="189.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="totalPopLabel" prefHeight="17.0" prefWidth="158.0" text="Label">
+               <graphic>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total populations:" />
+               </graphic>
+            </Label>
+            <Label fx:id="newCreatureLabel" text="Label">
+               <graphic>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="New creature at:" />
+               </graphic>
+            </Label>
+            <Label fx:id="childOfLabel" text="Label">
+               <graphic>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Child of:" />
+               </graphic>
+            </Label>
+            <Label fx:id="fitnessLabel" text="Label">
+               <graphic>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Fitness:" />
+               </graphic>
+            </Label>
+            <Label fx:id="avgPopFittLabel" text="Label">
+               <graphic>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Average population fitness:" />
+               </graphic>
+            </Label>
+            <Label fx:id="totalReproductionLabel" text="Label">
+               <graphic>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total reproductions:" />
+               </graphic>
+            </Label>
+            <Label fx:id="genNumLabel" text="Label">
+               <graphic>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Generation number:" />
+               </graphic>
+            </Label>
+            <Label fx:id="totalMutLabel" text="Label">
+               <graphic>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total mutations:" />
+               </graphic>
+            </Label>
+         </children>
+      </VBox>
+   </left>
+   <right>
+      <Canvas fx:id="neuroCanvas" height="651.0" mouseTransparent="true" nodeOrientation="INHERIT" width="200.0" BorderPane.alignment="BOTTOM_RIGHT" />
+   </right>
+</BorderPane>
