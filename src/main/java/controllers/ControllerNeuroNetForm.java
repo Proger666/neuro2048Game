@@ -19,7 +19,10 @@ import java.util.ResourceBundle;
 public class ControllerNeuroNetForm implements ControlledScreen, Initializable {
     ScreensController myController;
 
-    GraphicsContext GC;
+    public GraphicsContext GC;
+
+    @FXML
+    private Label bestScoreLabel;
 
     @FXML
     private Canvas neuroCanvas;
@@ -114,5 +117,9 @@ public class ControllerNeuroNetForm implements ControlledScreen, Initializable {
 
     public void setStrokeColor(Color colour) {
         this.GC.setStroke(colour);
+    }
+
+    public void updateBestScoreLabel(int bestScore) {
+        bestScoreLabel.setText(String.valueOf(bestScore));
     }
 }

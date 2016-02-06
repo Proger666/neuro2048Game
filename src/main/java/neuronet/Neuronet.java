@@ -1,5 +1,6 @@
 package neuronet;
 
+import com.sun.org.apache.xalan.internal.xsltc.runtime.ErrorMessages_pt_BR;
 import game2048.Game2048;
 import controllers.*;
 import javafx.animation.KeyFrame;
@@ -9,6 +10,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.Main;
@@ -38,7 +41,9 @@ public class Neuronet {
     public static String action = null;
     private final ScreensController screenChangerController;
     private final String currentScreen = Main.neuroNetScreenID;
-    private Scene scene;
+
+    private Canvas canvas;
+    GraphicsContext GC;
 
 
     //Bunch of variables for neuroNet statistics
@@ -58,71 +63,97 @@ public class Neuronet {
     private Creature[] creatureList;
 
 
-
     private ControllerNeuroNetForm controller;
+    private Stage currentStage;
+    private Scene currentScene;
+    private double isStuck = 0;
 
 
-
-    public void runSimulation(Game2048 game2048) throws IOException {
+    public void runSimulation(Game2048 game2048) throws IOException, InterruptedException {
         this.game2048 = game2048;
         this.controller = createNewStage();
         updateLabels();
         this.drawStart();
         this.creatureList = new Creature[POP_SIZE];
 
-           for(int fiveSecondsWonder = 0; fiveSecondsWonder < this.creatureList.length; fiveSecondsWonder++) {
-               this.creatureList[fiveSecondsWonder] = new Creature(game2048);
-               try {
-                   Neuronet.this.creatureList[Neuronet.this.currentCreature].
-                           makeAction(Neuronet.this.creatureList[Neuronet.this.currentCreature].calculateMove());
-               } catch (IOException e) {
-                   System.out.println("Action wasn't calculated");
-               }
-               Neuronet.this.calculateFitness(game2048.getScore(), Neuronet.this.creatureList[currentCreature].getMaxTile());
-               }
-           this.calculateAverageFitness();
-           this.averageFitLevels.add(Double.valueOf(this.averageFitness));
+        for (int fiveSecondsWonder = 0; fiveSecondsWonder < this.creatureList.length; fiveSecondsWonder++) {
+            this.creatureList[fiveSecondsWonder] = new Creature(game2048, controller.GC.getCanvas());
 
-        Timeline mainTimeline = new Timeline(new KeyFrame(Duration.seconds(TICK_RATE), event -> {
+            makeMoves(game2048);
+        }
+        this.calculateAverageFitness();
+        this.averageFitLevels.add(Double.valueOf(this.averageFitness));
+        final Timeline[] mainTimeline = {null};
+
+
+        EventHandler onFinished = null;
+        mainTimeline[0] = new Timeline(new KeyFrame(Duration.seconds(TICK_RATE),  event -> {
             Neuronet.this.drawStart();
-
             Neuronet.this.currentCreature = Neuronet.this.randomReproduce();
+
             try {
-                Neuronet.this.creatureList[Neuronet.this.currentCreature].
-                        makeAction(Neuronet.this.creatureList[Neuronet.this.currentCreature].calculateMove());
-            } catch (IOException ex) {
-                System.out.println();
+                isStuck = 0;
+                Neuronet.this.creatureList[Neuronet.this.currentCreature].setSignals();
+                action = Neuronet.this.creatureList[Neuronet.this.currentCreature].calculateMove();
+                Neuronet.this.creatureList[Neuronet.this.currentCreature].makeAction(action);
+                Neuronet.this.creatureList[Neuronet.this.currentCreature].draw(Neuronet.this.controller);
+                this.game2048.repaint();
+                Neuronet.this.calculateFitness(game2048.getScore(), Neuronet.this.creatureList[currentCreature].getMaxTile());
+
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            Neuronet.this.calculateFitness(Neuronet.this.game2048.getScore(), Neuronet.this.creatureList[currentCreature].getMaxTile());
-            Neuronet.this.creatureList[Neuronet.this.currentCreature].draw(Neuronet.this.controller);
-            Neuronet.this.fitLevels.add(Neuronet.this.creatureList[Neuronet.this.currentCreature].getFitness());
-            Neuronet.this.reproductionCount++;
-            Neuronet.this.calculateAverageFitness();
-            if (Neuronet.this.reproductionCount % 50 == 0) {
-                Neuronet.this.averageFitLevels.add(Neuronet.this.averageFitness);
-            }
-            if (Neuronet.this.reproductionCount % Neuronet.this.creatureList.length == 0) {
-                Neuronet.this.generationCount++;
-            }
-            Neuronet.this.creatureList[Neuronet.this.currentCreature].draw(Neuronet.this.controller);
+
             Neuronet.this.updateLabels();
+
+
+            if (!this.game2048.canMove()) {
+                bestScore = this.game2048.getScore() > bestScore ? this.game2048.getScore() : bestScore;
+                this.game2048.resetGame();
+                Neuronet.this.reproductionCount++;
+                Neuronet.this.calculateAverageFitness();
+                if (Neuronet.this.reproductionCount % 50 == 0) {
+                    Neuronet.this.averageFitLevels.add(Neuronet.this.averageFitness);
+                }
+                if (Neuronet.this.reproductionCount % Neuronet.this.creatureList.length == 0) {
+                    Neuronet.this.generationCount++;
+                }
+                Neuronet.this.creatureList[Neuronet.this.currentCreature].draw(Neuronet.this.controller);
+                updateLabels();
+            }
         }));
 
-        mainTimeline.setCycleCount(-1);
-        mainTimeline.play();
+        mainTimeline[0].setCycleCount(-1);
+        mainTimeline[0].setAutoReverse(true);
 
-   }
+
+        mainTimeline[0].play();
+
+
+
+
+    }
+
+
+    private void makeMoves(Game2048 game2048) throws IOException {
+
+
+    }
 
     private ControllerNeuroNetForm createNewStage() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/NeuroNetForm.fxml"));
         Parent parent = loader.load();
         ControllerNeuroNetForm ct = loader.getController();
-        Scene scene = new Scene(parent);
+        this.currentScene = new Scene(parent);
 
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.sizeToScene();
-        stage.show();
+        currentStage = new Stage();
+        currentStage.setScene(currentScene);
+
+
+        currentStage.sizeToScene();
+        currentStage.show();
         return ct;
     }
 
@@ -149,6 +180,7 @@ public class Neuronet {
         controller.updateGenNumLabel(generationCount);
         controller.updateTotalMutLabel(mutations);
         controller.updateTotalReproductionLabel(reproductionCount);
+        controller.updateBestScoreLabel(bestScore);
 
     }
 
@@ -177,7 +209,7 @@ public class Neuronet {
             this.parent1 = numbers[1];
             this.parent2 = numbers[2];
 
-            Synapse[] newSynapses = new Synapse[20];
+            Synapse[] newSynapses = new Synapse[40];
 
             for (int i = 0; i < newSynapses.length; ++i) {
                 double rand = Math.random();
@@ -187,7 +219,7 @@ public class Neuronet {
                     ++this.mutations;
                 }
             }
-                this.creatureList[numbers[0]] = new Creature(this.game2048, newSynapses);
+                this.creatureList[numbers[0]] = new Creature(this.game2048, newSynapses, controller.GC.getCanvas());
                 return numbers[0];
             }
 
@@ -276,5 +308,6 @@ public class Neuronet {
         controller.drawLines(800.0D, 300.0D, 1200.0D, 300.0D,
                 1.0D);
     }
+
 
 }

@@ -47,7 +47,11 @@ public class Controller implements  ControlledScreen {
                 myController);
 
         //Start NeuroNet
-        net.runSimulation(prepareGame());
+        try {
+            net.runSimulation(prepareGame());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private Game2048 prepareGame() {

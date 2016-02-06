@@ -33,7 +33,7 @@ public class Synapse {
 
     public void draw(ControllerNeuroNetForm controllerNeuroNetForm) {
         controllerNeuroNetForm.setStrokeColor(Color.GREY);
-        controllerNeuroNetForm.drawLines(this.startx, this.starty, this.endx, this.endy, 10.0D * this.weight);
+        controllerNeuroNetForm.drawLines(this.startx, this.starty, this.endx, this.endy, 1.0D + (this.weight * 10));
     }
 
     public Point getSource() {

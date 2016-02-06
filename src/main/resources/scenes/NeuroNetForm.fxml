@@ -12,9 +12,9 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="652.0" prefWidth="883.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ControllerNeuroNetForm">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="621.0" prefWidth="1250.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ControllerNeuroNetForm">
    <left>
-      <VBox prefHeight="400.0" prefWidth="189.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="652.0" prefWidth="181.0" BorderPane.alignment="CENTER">
          <children>
             <Label fx:id="totalPopLabel" prefHeight="17.0" prefWidth="158.0" text="Label">
                <graphic>
@@ -56,10 +56,15 @@
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total mutations:" />
                </graphic>
             </Label>
+            <Label fx:id="bestScoreLabel" text="0">
+               <graphic>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Best Score:" />
+               </graphic>
+            </Label>
          </children>
       </VBox>
    </left>
-   <right>
-      <Canvas fx:id="neuroCanvas" height="651.0" mouseTransparent="true" nodeOrientation="INHERIT" width="200.0" BorderPane.alignment="BOTTOM_RIGHT" />
-   </right>
+   <center>
+      <Canvas fx:id="neuroCanvas" height="600.0" mouseTransparent="true" nodeOrientation="INHERIT" width="1036.0" BorderPane.alignment="CENTER" />
+   </center>
 </BorderPane>

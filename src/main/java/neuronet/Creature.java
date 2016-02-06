@@ -4,8 +4,12 @@ package neuronet;
 
 import game2048.Game2048;
 import controllers.ControllerNeuroNetForm;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
@@ -14,6 +18,7 @@ import java.util.*;
  */
 public class Creature {
     private final  Game2048 game2048;
+    private final Canvas scene;
 
     //Static Variables
     List<String> keys = new LinkedList<String>() {{
@@ -45,22 +50,26 @@ public class Creature {
 
 
 
-    public Creature(Game2048 game2048) {
+    public Creature(Game2048 game2048, Canvas scene) {
         this.game2048 = game2048;
+        this.scene = scene;
+
         this.createPoints();
         this.createSynapses(Neuronet.HIDDEN_COUNT * Neuronet.INPUTS_COUNT + Neuronet.HIDDEN_COUNT * Neuronet.OUTPUTS_COUNT);
         this.setSignals();
 
     }
 
-    public Creature(Game2048 game2048, Synapse[] s) {
+    public Creature(Game2048 game2048, Synapse[] s, Canvas scene) {
         this.game2048 = game2048;
+        this.scene = scene;
+
         this.createPoints();
         this.synapses = s;
         this.setSignals();
     }
 
-    protected String calculateMove(){
+    protected String calculateMove() throws FileNotFoundException {
         double maxSignal = 0;
         OutputNode decNode = null;
         for (OutputNode o :
@@ -70,6 +79,7 @@ public class Creature {
                 decNode = o;
             }
         }
+
         decNode.setColor(255,255,0);
         return decNode.getKey();
     }
@@ -82,30 +92,37 @@ public class Creature {
         this.outputNodes = new OutputNode[Neuronet.OUTPUTS_COUNT];
 
 
-        int curPoint =0;
+        int curPoint = 0;
         for (int in = 0; in < Neuronet.INPUTS_COUNT; in++, curPoint++) {
-            this.inputNodes[in] = new InputNode(125.0D, 85.0D + 25.0D * in, Color.RED);
+            this.inputNodes[in] = new InputNode(scene.getWidth() * 0.05D, getYlocation(in, inputNodes.length) , Color.PALEVIOLETRED);
             points[curPoint] = inputNodes[in];
         }
 
         for (int hn = 0; hn < Neuronet.HIDDEN_COUNT; hn++, curPoint++) {
 
             points[curPoint] = this.hiddenNodes[hn] =
-                    new HiddenNode(375.0D, 85.0D + 25.0D * hn, Color.rgb(255, 0, 0));
+                    new HiddenNode(scene.getWidth() * 0.20D, getYlocation(hn, hiddenNodes.length) , Color.ALICEBLUE);
 
         }
 
         int i = 0;
         for (int out = 0; out < Neuronet.OUTPUTS_COUNT; out++, curPoint++) {
             points[curPoint] = this.outputNodes[out] =
-                    new OutputNode(375.0D, 85.0D + 25.0D * out, Color.rgb(255, 0, 0));
+                    new OutputNode(scene.getWidth() * 0.40D, getYlocation(out, outputNodes.length) , Color.GREEN);
 
             this.outputNodes[out].setKey(keys.get(i++));
         }
 
     }
 
-    private void setSignals() {
+    private double getYlocation(int v, int c) {
+        double result = (float) 100 / (c + 1) / 100;
+        result = (scene.getHeight() - 20.0D) - (scene.getHeight() * result * (v + 1));
+
+        return  result;
+    }
+
+    public void setSignals() {
         try {
             int i = 0;
             for (Game2048.Tile t :
@@ -134,16 +151,16 @@ public class Creature {
         for (InputNode in :
                 inputNodes) {
             for (int i = 0; i < Neuronet.HIDDEN_COUNT; i++, tS++) {
-                this.synapses[tS] = new Synapse(in.getxPos(), in.getyPos(),
-                        hiddenNodes[i].getxPos(), hiddenNodes[i].getyPos(), in, hiddenNodes[i]);
+                this.synapses[tS] = new Synapse(in.getxPos() + 25.0D, in.getyPos() + 25.0D,
+                        hiddenNodes[i].getxPos() + 25.0D, hiddenNodes[i].getyPos() + 25.0D, in, hiddenNodes[i]);
             }
         }
         for (HiddenNode hn :
                 hiddenNodes) {
 
             for (int i = 0; i < Neuronet.OUTPUTS_COUNT; i++, tS++) {
-                this.synapses[tS] = new Synapse(hn.getxPos(), hn.getyPos(),
-                        outputNodes[i].getxPos(), outputNodes[i].getyPos(), hn, outputNodes[i]);
+                this.synapses[tS] = new Synapse(hn.getxPos() + 25.0D, hn.getyPos() + 25.0D,
+                        outputNodes[i].getxPos() + 25.0D, outputNodes[i].getyPos() + 25.0D, hn, outputNodes[i]);
             }
         }
     }
@@ -173,10 +190,6 @@ public class Creature {
             }
         }
         return maxTileValue;
-    }
-
-    public int getScore() {
-        return game2048.getScore();
     }
 
     public void makeAction(String action) throws IOException {

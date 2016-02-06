@@ -36,7 +36,7 @@ import javafx.scene.paint.Color;
         }
         public void draw(ControllerNeuroNetForm controllerNeuroNetForm) {
             controllerNeuroNetForm.setStrokeColor(Color.BLACK);
-            controllerNeuroNetForm.drawNodes(col,this.xPos,this.yPos,50.0D,50.0D);
+            controllerNeuroNetForm.drawNodes(col,this.xPos,this.yPos,25.0D,25.0D);
         }
         public void setColor(int r, int g, int b) {
             this.col = Color.rgb(r, g, b);
